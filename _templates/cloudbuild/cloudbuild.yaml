@@ -1,0 +1,28 @@
+steps:
+- name: 'bash'
+  id: build
+  env:
+    - 'PROJECT_ID=$PROJECT_ID'
+    - 'SHORT_SHA=$SHORT_SHA'
+  script: |
+    echo "Welcome to the project $PROJECT_ID. This is $SHORT_SHA" > index.html
+- name: 'gcr.io/cloud-builders/gsutil'
+  id: copy-to-storage
+  args:
+    - rsync
+    - -x
+    - '\.git.*'
+    - ./
+    - gs://$_PROJECT_BUCKET
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: update-mig
+  args:
+    - compute
+    - instance-groups
+    - managed
+    - rolling-action
+    - replace
+    - $_MIG_NAME
+    - --region=$_REGION
+options:
+  logging: CLOUD_LOGGING_ONLY

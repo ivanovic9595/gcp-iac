@@ -1,0 +1,17 @@
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev:  v1.71.0
+    hooks:
+      - id: terragrunt_fmt
+      - id: terragrunt_validate
+        exclude: |
+          (?x)^(
+            ([a-z]+)\.hcl|
+            _envcommon/.*
+          )$
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.2.0
+    hooks:
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
